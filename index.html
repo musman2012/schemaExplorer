@@ -48,6 +48,7 @@ text {
 
   var tables = {}; 
   var dataTypes = {};
+  var columns = {}
 
     // BIGQUERY PROJECT ID AND CLIENT ID
   /*var project_id = 'yhcr-prd-phm-bia-core';
@@ -61,16 +62,27 @@ text {
   
 
   schema.forEach(function(entry){
-    tables[entry['table_name']] = 1;
+    var tbl_name = entry['table_name'];
+    //var col_name = entry['column_name'];
+    tables[tbl_name] = 1;
     dataTypes[entry['data_type']] = 1;
+    // if(!columns.hasOwnProperty(col_name)) {
+    //   columns[col_name] = [tbl_name]
+      
+    // }
+    // columns[col_name].push(tbl_name);
+
+    
   });
   console.log(tables);
+  //console.log(columns);
 
   // sort tables alphabetically
   var arrTabs = [];
    for (key in tables) {
         if (tables.hasOwnProperty(key))
             arrTabs.push(key);
+
     }
 
     arrTabs.sort();
@@ -299,6 +311,15 @@ function dragended(d) {
 
 }
 
+function wash(detailRect, detailG, svg){
+  console.log("Wash called")
+  detailRect.style('opacity', 0.0); 
+  detailG.selectAll('circle').remove(); 
+  detailG.selectAll('.nodes').remove(); 
+  detailG.selectAll('line').remove();
+  svg.selectAll(".arrowline").transition(duration).style("opacity", 0.0);
+}
+
 function update(source) {
 
   // Assigns the x and y position for the nodes
@@ -372,9 +393,8 @@ function update(source) {
       .on("mouseover", function(d){ 
         svg.clicked = false;                      // maintaing the default state and washing prev content
 
-        detailG.selectAll('circle').remove(); 
-        detailG.selectAll('.nodes').remove(); 
-        detailG.selectAll('line').remove();
+        //wash()
+        wash(detailRect, detailG, svg)
 
         svg.selectAll("path").sort(function (a, b) { // select the parent and sort the path's
                 if (a.id != d.id) return -1;               // a is not the hovered element, send "a" to the back
@@ -382,6 +402,8 @@ function update(source) {
             });
         console.log(d.y);
         console.log(d.x);
+        console.log("Path is:")
+        console.log(svg.selectAll("path"));
         if(d.data.dataType){
           detailG.transition()
             .duration(duration)
@@ -415,11 +437,12 @@ function update(source) {
         console.log(svg.clicked);
         if(!svg.clicked){
           console.log(svg.clicked);
-          detailRect.style('opacity', 0.0); 
-          detailG.selectAll('circle').remove(); 
-         detailG.selectAll('.nodes').remove(); 
-         detailG.selectAll('line').remove();
-         svg.selectAll(".arrowline").transition(duration).style("opacity", 0.0);
+          wash(detailRect, detailG, svg)
+        //   detailRect.style('opacity', 0.0); 
+        //   detailG.selectAll('circle').remove(); 
+        //  detailG.selectAll('.nodes').remove(); 
+        //  detailG.selectAll('line').remove();
+        //  svg.selectAll(".arrowline").transition(duration).style("opacity", 0.0);
          
         }
             
