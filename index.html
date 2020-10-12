@@ -115,6 +115,7 @@ var margin = {top: 100, right: 90, bottom: 100, left: 90},
 var svg = d3.select("body").append("svg")
     .attr("width", width + margin.right + margin.left)
     .attr("height", height + margin.top + margin.bottom)
+    .attr("clicked", false)       // introduced this new attr to track clicks
   .append("g")
     .attr("transform", "translate("
           + margin.left + "," + margin.top + ")");
@@ -369,6 +370,12 @@ function update(source) {
         return 0.5;
       })
       .on("mouseover", function(d){ 
+        svg.clicked = false;                      // maintaing the default state and washing prev content
+
+        detailG.selectAll('circle').remove(); 
+        detailG.selectAll('.nodes').remove(); 
+        detailG.selectAll('line').remove();
+
         svg.selectAll("path").sort(function (a, b) { // select the parent and sort the path's
                 if (a.id != d.id) return -1;               // a is not the hovered element, send "a" to the back
                 else return 1;                             // a is the hovered element, bring "a" to the front
@@ -405,11 +412,24 @@ function update(source) {
 
       })
       .on("mouseout", function(d){
+        console.log(svg.clicked);
+        if(!svg.clicked){
+          console.log(svg.clicked);
           detailRect.style('opacity', 0.0); 
           detailG.selectAll('circle').remove(); 
          detailG.selectAll('.nodes').remove(); 
          detailG.selectAll('line').remove();
          svg.selectAll(".arrowline").transition(duration).style("opacity", 0.0);
+         
+        }
+            
+      })
+
+      .on("click", function(d){
+          //detailRect.style('opacity', 0.0); 
+          console.log(svg.clicked);
+          console.log("clicked");
+          svg.clicked = true;
            
       });
 
